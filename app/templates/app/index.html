@@ -1,0 +1,73 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<br>
+
+<div class="row">
+    
+    <div class="col-lg-12">
+        <div>
+      <h1>Philippine City Weather</h1>
+      <label for="city-dropdown">Select a City:</label>
+      <select class="form-select form-select-lg mb-3l" id="city-dropdown">
+        <option value="Manila">Manila</option>
+        <option value="Cebu">Cebu</option>
+        <option value="Davao">Davao</option>
+        <!-- add more options here for other cities in the Philippines -->
+      </select>
+            <br>
+      <button class="btn btn-primary" id="select-city-btn">Select City</button>
+    </div>
+    <hr />
+    <div>
+      <h2 id="city-name"></h2>
+      <p>Temperature: <span id="temp"></span> &#8451;</p>
+      <p>Description: <span id="description"></span></p>
+      <p>Humidity: <span id="humidity"></span>%</p>
+    </div>
+    <script>
+
+
+    const api_key = "YOUR_API_KEY";
+    const url = `http://api.openweathermap.org/data/2.5/find?q=Philippines&type=like&sort=population&appid=${api_key}`;
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        // data.list contains the list of cities
+        // loop through data.list and do something with each city
+        data.list.forEach(city => {
+          console.log(`${city.name}: ${city.coord.lat}, ${city.coord.lon}`);
+        });
+      })
+      .catch(error => console.error(error));
+
+
+      const cityDropdown = document.getElementById('city-dropdown');
+      const selectCityBtn = document.getElementById('select-city-btn');
+      const cityName = document.getElementById('city-name');
+      const temp = document.getElementById('temp');
+      const description = document.getElementById('description');
+      const humidity = document.getElementById('humidity');
+      const apiKey = 'ec9e94caf487e43feb99443c90baf760';
+
+      selectCityBtn.addEventListener('click', () => {
+        const selectedCity = cityDropdown.value;
+        fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${selectedCity}&units=metric&appid=${apiKey}`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            cityName.textContent = data.name;
+            temp.textContent = data.main.temp;
+            description.textContent = data.weather[0].description;
+            humidity.textContent = data.main.humidity;
+          });
+      });
+
+    </script>
+    </div>
+</div>
+
+{% endblock %}
