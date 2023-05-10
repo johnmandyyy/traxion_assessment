@@ -79,6 +79,8 @@
 
 
 <div class="row">
+
+    
     
     <div class="col-lg-12">
 
@@ -90,11 +92,69 @@
         <button type="submit" class="btn btn-success">Add City</button>
             <br><br>
         </form>
+    </div>
 
+    <br>
+    <div class="col-lg-12">
+        <div id="table">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Latitude</th>
+                  <th>Longitude</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="city in cities">
+                  <td>[[city.id]] </td>
+                  <td>[[city.name]]</td>
+                  <td>[[city.latitude]]</td>
+                  <td>[[city.longitude]]</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+
+<script>
+
+    new Vue({
+      delimiters: ["[[", "]]"],
+      el: '#table',
+      data: {
+        cities: []
+        },
+
+      mounted() {
+        axios.get('http://localhost:8000/api/cities/')
+        this.fetchData();
+        setInterval(this.fetchData, 5000); // poll every 5 seconds
+        },
+
+      methods: {
+        fetchData() {
+          axios.get('http://localhost:8000/api/cities/')
+            .then(response => {
+              this.cities = response.data;
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        }
+        }
+
+
+    });
+
+  </script>
 
 
 
     </div>
+
+
 </div>
 
 
