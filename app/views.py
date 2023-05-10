@@ -3,19 +3,36 @@ Definition of views.
 """
 
 from datetime import datetime
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpRequest
+from rest_framework import generics
+from .models import Cities
+from .serializers import CitiesSerializer
+
+
+#FORMS
+from .forms import CitiesForm
+
+#FOR DJANGO REST API
+class CitiesList(generics.ListAPIView):
+    queryset = Cities.objects.all()
+    serializer_class = CitiesSerializer
+
+
 
 def home(request):
     """Renders the home page."""
     assert isinstance(request, HttpRequest)
+
     return render(
         request,
         'app/index.html',
         {
             'title':'Home Page',
             'year':datetime.now().year,
+            'add_city': CitiesForm(),
         }
+
     )
 
 def contact(request):
@@ -43,3 +60,19 @@ def about(request):
             'year':datetime.now().year,
         }
     )
+
+
+class FormActions:
+
+    def __init__(self):
+        pass
+
+    def create_city(self, request):
+        if request.method == 'POST':
+            form = CitiesForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('/')
+        else:
+            form = CitiesForm()
+        return home
